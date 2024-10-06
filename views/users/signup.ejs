@@ -1,0 +1,78 @@
+<% include('../layouts/header.ejs') %>
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<!-- Custom Theme files -->
+ <link href="stylesheets/signup.css" rel="stylesheet" type="text/css" media="all" />
+ 
+
+
+<link href="//fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i" rel="stylesheet">
+  <style>
+     .circle{
+	width: 90px;
+    height: 90px;
+    border-radius: 50px;
+    background-color: white;
+    position: absolute;
+    left: 47%;
+    top: 109px;
+	 }
+    .img{
+	width: 90px;
+    border-radius: 50px;
+    height: 90px;
+    object-fit: cover;
+	}
+	#image{
+
+    font-size: 38px;
+    position: absolute;
+    top: 26px;
+    left: -16px;
+    opacity: 0;
+	}
+  </style>
+</head>
+<body>
+	<!-- main -->
+	<div class="main-w3layouts wrapper">
+		<h1> Sign Up </h1>
+		<div class="main-agileinfo" >
+			<div class="agileits-top" >
+
+
+       
+
+				<form action="/registerUser" id="signupForm" method="post" enctype="multipart/form-data">
+					<div class="circle">
+						<img class="img" id="imgUpdate" src="images/blank-profile-picture-973460_960_720.webp"  alt="">
+						<input  class="text" id="image"  type="file" name="image">
+					   </div>
+                         <p style="color: rgb(208, 25, 25); font-weight: bold;" id="result"> </p>
+
+					<input class="text" type="text" name="name" id="name" placeholder="Username" required="">
+					<input class="text email" type="email" name="email" id="email" placeholder="Email" required="">
+					<input class="text" type="password" name="password" id="password" placeholder="Password" required="">
+					<input class="text w3lpass" type="password" id="ConformPassword" name="password" placeholder="Confirm Password" required="">
+
+					
+					<input type="submit" value="SIGNUP">
+				</form>
+				<p>Already have account <a href="/login"> Login Now!</a></p>
+			</div>
+		</div>
+		<ul class="colorlib-bubbles">
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+	</div>
+	<!-- //main -->
+	 <script src="js/signupValidation.js"></script>
+	 <% include('../layouts/footer.ejs') %>
