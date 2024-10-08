@@ -19,7 +19,7 @@ const  userSchema = mongoose.Schema({
         required:true
     },
     is_admin:{
-        type:Number,
+        type:Boolean,
         required:false
     },
     is_verified:{

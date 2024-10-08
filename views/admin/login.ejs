@@ -2,7 +2,7 @@
 
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 
-<link href="stylesheets/signup.css" rel="stylesheet" type="text/css" media="all" />
+<link href="/stylesheets/adminlogin.css" rel="stylesheet" type="text/css" media="all" />
 
 <link href="//fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i" rel="stylesheet">
 
@@ -10,14 +10,22 @@
 
 	<div class="main-w3layouts wrapper">
 		<h1> Admin  Login </h1>
+
+		 <p id="result" style="
+		 color: red;
+    font-weight: bold;
+    text-align: center;
+    font-size: large;
+    margin-top: 17px;
+		 ">  </p>
 		<div class="main-agileinfo">
 			<div class="agileits-top">
-				<form action="/loginValid" method="POST">
+				<form action="/admin/loginValid" id="formSubmit" method="POST">
 					<input class="text" type="email" name="email" id="email" placeholder="Email" required>
 					<input class="text email" type="password" name="password" id="password" placeholder="Password" required>
 					<input type="submit" id="signup" value="SIGNUP">
 				</form>
-				<p>Don't have an Account <a href="/signup"> Signup Now!</a></p>
+				<!-- <p>Don't have an Account <a href="/signup"> Signup Now!</a></p> -->
 			</div>
 		</div>
 		<ul class="colorlib-bubbles">
@@ -33,5 +41,60 @@
 			<li></li>
 		</ul>
 	</div>
+	<script>
+		document.getElementById('formSubmit').addEventListener('submit',(e)=>{
+			e.preventDefault();
+			const email = document.querySelector('#email').value
+			const password = document.querySelector('#password').value
+			const result = document.querySelector('#result')
+			if(email.length <= 0){
+                return result.innerHTML = 'Must be fill Email Field'
+			}
+			if(password.length <= 0){
+                return result.innerHTML = 'Must be fill Password  Field'
+			}
+           let user = {
+			email,
+			password
+		   }
+		   setTimeout(()=>{
+			result.innerHTML = '';
+		   },5000)
+		   let obj = JSON.stringify(user)
+		   try{
+
+		   
+            fetch('/admin/loginValid',{
+              method:'POST',
+			  headers:{
+                'Content-Type':'application/json'
+			  },
+			  body:obj
+			}).
+			then((response)=> response.json()).
+			then(data =>{
+				console.log(data);
+				
+				if(data.status === 200){
+					result.style.color = 'green'
+					result.innerHTML = data.msg
+					return setTimeout(()=>{
+
+						location.href = `/admin/${data.userID}`
+					},2000)
+				 }else{
+					result.innerHTML = data.error
+				}
+				
+				
+			}).catch((err)=>{
+				result.innerHTML = data.error;
+			})
+		}catch(err){
+			result.innerHTML = 'Some thing Wrong'
+		}
+		})
+
+	</script>
 	<!-- //main -->
 <% include('../layouts/footer.ejs') %>

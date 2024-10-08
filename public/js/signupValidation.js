@@ -75,7 +75,7 @@ document.getElementById("signupForm").addEventListener('submit', (e) => {
                     result.innerHTML = "Your signup is successfully completed. Please verify your email.";
                     setTimeout(()=>{
                         location.href = '/'
-                    },4000)
+                    },2000)
                 } else if(response.status === 301){
                     result.innerHTML = data.error;
                 }else{

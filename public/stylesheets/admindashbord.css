@@ -1,0 +1,220 @@
+/* General styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+}
+
+/* Sidebar styling */
+#sidebar {
+    position: fixed;
+    width: 250px;
+    height: 100%;
+    background-color: #343a40;
+    padding-top: 20px;
+    color: #fff;
+}
+
+#brand {
+    padding: 0 15px;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.sidebar-brand {
+    color: #fff;
+    text-decoration: none;
+}
+
+#nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+#nav ul li {
+    margin: 0;
+}
+
+#nav ul li a {
+    display: block;
+    padding: 15px;
+    color: #fff;
+    text-decoration: none;
+    border-bottom: 1px solid #484e53;
+}
+
+#nav ul li a:hover {
+    background-color: #495057;
+}
+
+#nav ul li.active a {
+    background-color: #007bff;
+    font-weight: bold;
+}
+
+hr {
+    border-color: #6c757d;
+}
+
+/* Appbar styling */
+#appbar {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    position: fixed;
+    width: calc(100% - 250px);
+    left: 250px;
+    top: 0;
+    z-index: 1000;
+}
+
+.appbar-greeting {
+    margin: 0;
+    display: inline-block;
+}
+
+.appbar-signout {
+    color: #fff;
+    margin-left: 20px;
+    text-decoration: none;
+}
+
+.appbar-signout:hover {
+    text-decoration: underline;
+}
+
+.sidebar-toggle {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+}
+
+.sidebar-toggle .icon-bar {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background-color: #fff;
+    margin: 4px 0;
+}
+
+/* Main content */
+#main {
+    margin-left: 250px;
+    padding: 20px;
+    padding-top: 70px; /* Adjust padding based on header height */
+}
+
+.page-header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.page-header h1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Table styling for listing users */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+}
+
+.table th, .table td {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+    text-align: left;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.table .user-action-buttons a {
+    margin-right: 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.table .user-action-buttons a:hover {
+    text-decoration: underline;
+}
+
+/* Panel footer for pagination */
+.panel-footer {
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+}
+
+.pagination-container {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.pagination {
+    list-style: none;
+    padding: 0;
+    display: inline-block;
+}
+
+.pagination li {
+    display: inline;
+    margin: 0 2px;
+}
+
+.pagination li a {
+    display: inline-block;
+    padding: 6px 12px;
+    color: #007bff;
+    text-decoration: none;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+
+.pagination li.active a {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #sidebar {
+        width: 200px;
+    }
+    
+    #appbar {
+        width: calc(100% - 200px);
+        left: 200px;
+    }
+
+    #main {
+        margin-left: 200px;
+    }
+}
+
+@media (max-width: 576px) {
+    #sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    #appbar {
+        width: 100%;
+        left: 0;
+    }
+
+    #main {
+        margin-left: 0;
+        padding-top: 100px;
+    }
+}

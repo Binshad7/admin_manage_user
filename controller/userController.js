@@ -48,7 +48,7 @@ const newUserRegister = async (req, res) => {
                 email,
                 image,
                 password: hashedPassword,
-                is_admin: 0
+                is_admin: false
             })
             let result = await user.save()
             req.session.userID = result._id;

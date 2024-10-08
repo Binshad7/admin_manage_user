@@ -28,14 +28,7 @@ app.use(session({
     saveUninitialized:true,
     cookie:{maxAge:1000*60*60*24}
   }))
-//   //flash message
-//   app.use(flash())
 
-//   app.use((req, res, next) => {
-//     res.locals.successMessage = req.flash('success');
-//     res.locals.errorMessage = req.flash('error');
-//     next();
-// });
 
 // cache
 app.use(nocache())
