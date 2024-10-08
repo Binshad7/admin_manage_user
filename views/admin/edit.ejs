@@ -1,0 +1,111 @@
+
+<% include('../layouts/header.ejs') %>
+
+<div class="agileits-top" style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; max-width: 600px; margin: auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <h2 style="text-align: center; color: #343a40;">Edit User Profile</h2>
+
+    <form action="/admin/editUserProfile" id="editProfileForm" method="post" enctype="multipart/form-data">
+        <div class="circle" style="text-align: center; margin-bottom: 20px;">
+            <img class="img" id="imgUpdate" src="/userImages/<%= user.image %>" alt="Profile Image" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <br>
+            <label for="image"  style="display: inline-block; margin-top: 15px; background-color: #343a40; color: #ffffff; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Change Image</label>
+            <input class="text" id="image" type="file" name="image" style="display: none;">
+        </div>
+
+        <div style="text-align: center;">
+            <p style="color: rgb(208, 25, 25); font-weight: bold;" id="result"></p>
+        </div>
+             <input type="text" value="<%= user._id %>" name="userID" id="userId" hidden>
+        <input class="text" type="text" name="name" id="name" value="<%= user.name %>" placeholder="Username" required="" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ced4da; border-radius: 4px;">
+
+        <input class="text email" type="email" name="email" id="email" value="<%= user.email %>" placeholder="Email" required="" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ced4da; border-radius: 4px;">
+
+        <input class="text" type="password" name="password" id="password" placeholder="New Password (Optional)" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ced4da; border-radius: 4px;">
+
+        <input class="text w3lpass" type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password (Optional)" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ced4da; border-radius: 4px;">
+
+        <input type="submit" value="Update Profile" style="background-color: #343a40; color: #ffffff; padding: 10px 20px; border: none; border-radius: 4px; width: 100%; cursor: pointer;">
+    </form>
+
+    <p style="text-align: center; margin-top: 15px;">Want to return to dashboard? <a href="/admin/" style="color: #343a40; text-decoration: none; font-weight: bold;">Go Back</a></p>
+</div>
+
+ <script>
+    let profile = document.querySelector('#imgUpdate')
+let inputFile = document.querySelector('#image')
+
+inputFile.onchange = ()=>{
+      profile.src = URL.createObjectURL(inputFile.files[0])
+}
+
+ddocument.querySelector('#editProfileForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData(form);
+    const result = document.getElementById("result");
+
+    // Clear previous error message
+    setTimeout(() => {
+        result.innerHTML = "";
+    }, 5000);
+
+    // Check for form validity
+    if (!form.checkValidity()) {
+        result.innerHTML = "Please fill out all required fields correctly!";
+        return;
+    }
+
+    const name = form.querySelector('#name').value.trim();
+    const email = form.querySelector('#email').value.trim();
+    const password = form.querySelector('#password').value.trim();
+    const confirmPassword = form.querySelector('#confirmPassword').value.trim(); // Corrected from ConformPassword
+
+    if (!name.match(/^[A-Za-z ]+$/)) {
+        result.innerHTML = 'Name should contain only letters and spaces.';
+        return;
+    }
+
+    if (!email.match(/^([a-zA-Z0-9_]+)@([a-zA-Z0-9]+)\.([a-zA-Z]+)(.[a-zA-Z]+)?$/)) {
+        result.innerHTML = "Email should be correctly entered";
+        return;
+    }
+
+    if (password && password !== confirmPassword) {
+        result.innerHTML = 'Confirm Password does not match.';
+        return;
+    }
+
+    try {
+        fetch('/admin/editUserProfile', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 200) {
+                result.innerHTML = data.msg;
+                setTimeout(() => {
+                    location.href = '/admin/';
+                }, 1000);
+            } else {
+                result.innerHTML = data.msg;
+            }
+        })
+        .catch(error => {
+            result.innerHTML = "Something went wrong. Please try again.";
+            console.error(error);
+        });
+    } catch (error) {
+        result.innerHTML = "Some thing went wrong";
+        console.error(error);
+    }
+});
+
+ </script>
+<% include('../layouts/footer.ejs') %>

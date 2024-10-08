@@ -189,13 +189,14 @@
             <span class="d-block d-lg-none">Admin</span>
             <span class="d-none d-lg-block">
                 <img class="img-fluid rounded-circle mx-auto" style="width: 110px;height: 110px;" src="/userImages/<%= admin.image %>" alt="Profile Photo" />
+                
             </span>
             <h5 class="text-white"> <%= admin.name %> </h5>
             <p class="text-muted" style="text-wrap: wrap; font-size: 13px;"> <%= admin.email %> </p>
         </a>
  
          <!-- logout button -->
-		<a class="btn-logout" >Logout </a>
+		<a class="btn-logout" href="/admin/logout" >Logout </a>
     </nav>
 
     <!-- Page Content -->
@@ -210,22 +211,25 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
+                        <th>No</th>
                         <th>Profile</th>
                         <th>Username</th>
                         <th>Email</th>
                         <th>Actions</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
 					
-                    <% users.forEach(user => { %>
+                    <% users.forEach((user,i) => { %>
 						<tr>
+                            <td><%= i+1 %></td>
 							<td><img src="/userImages/<%= user.image %>" class="img-fluid rounded-circle" alt="User Profile"></td>
 							<td><%= user.name %></td>
 							<td><%= user.email %></td>
 							<td>
-								<button class="btn btn-success">Edit</button>
-								<button class="btn btn-danger">Delete</button>
+								<a class="btn btn-success" href="/admin/edituser/<%= user._id %>">Edit</a>
+								<a class="btn btn-danger"  onclick="" >Delete</a>
 							</td>
 						</tr>
 					<% }); %>
