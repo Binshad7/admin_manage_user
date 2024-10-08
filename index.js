@@ -5,6 +5,7 @@ const ejs = require('ejs')
 const logger = require('morgan')
 const session = require('express-session')
 const nocache = require('nocache')
+const MongoStore = require('connect-mongo')
 // const flash = require('connect-flash')
 dotenv.config()
 
@@ -24,8 +25,12 @@ app.use(express.static('public'))// public folder fetch css and js
 //session 
 app.use(session({
     secret:process.env.secret,
-    resave:true,
+    resave:true, 
     saveUninitialized:true,
+    store: MongoStore.create({
+        mongoUrl: process.env.DB_URI,  // MongoDB connection string
+        collectionName: 'sessions',  // The collection where sessions will be stored
+      }),
     cookie:{maxAge:1000*60*60*24}
   }))
 

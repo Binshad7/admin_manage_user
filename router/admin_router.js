@@ -1,7 +1,7 @@
 const express = require('express');
 const admin_router = express();
 const multer = require('multer')
-
+const path = require('path')
   // Set up storage for uploaded files
   // suggest this we can do this in module
 const storage = multer.diskStorage({

@@ -1,7 +1,10 @@
 
 const Model = require('../models/userModel')
 const bcrypt = require('bcrypt')
-const ObjectId = require('mongoose').Types.ObjectId  // update user id not object id thats y youse this
+const ObjectId = require('mongoose').Types.ObjectId  //// update user id not object id thats y youse this 
+const fs = require('fs')
+const path = require('path')
+
 const login = (req,res) => {
     console.log("admin log");
     res.render('admin/login')
@@ -58,20 +61,49 @@ const editUser =async (req,res)=>{
 }
 
 const updateProfile =async (req,res)=>{
-     console.log(req.body);
-     console.log(1234566); 
-     let {userID,name,email,password} = req.body;
-     console.log(userID);
-     
-     _id = new ObjectId(userID)
-     password = await bcrypt.hash(password,10);
-     const user = await Model.updateOne({_id:_id},{
-        $set:{name,email,password}
-     }) 
-     console.log(user);
-     
-     res.redirect('/admin/')
-    //  res.send(`<h1>user Profile Success fully updated ${user} </h1>`)   
+
+    try{
+    const {userID, name ,email,password} = req.body;
+    const _id =new ObjectId(userID);
+    const  user =await Model.findOne({_id});
+    
+  
+    let image;
+    if(req.file){
+        image = req.file.filename;
+
+        // if file available then delete old image form tha folder
+        const oldImage = path.join(__dirname,`../public/userImages/${user.image}`)
+        if(fs.existsSync(oldImage)){
+              fs.unlink(oldImage,(error)=>{
+                
+                if(error){
+                    console.log("Some went wrong ",error);
+                }else{
+                    console.log('deleted');
+                }
+              })
+        }else{
+            console.log('file not found');
+            
+        }
+    } 
+    const updateData = {name,email};
+    if(password){
+        password = await bcrypt.hash(password,10);
+        updateData.password = password;
+    }
+
+    if(image){
+        updateData.image = image
+    }
+    let updated = await Model.updateOne({_id:_id},{$set:updateData})
+    console.log(updated);
+    
+     res.redirect('/admin/')  
+    }catch(error){
+       console.log(error);
+    }
 }
 
 const logout = (req,res)=>{
