@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt')
 const ObjectId = require('mongoose').Types.ObjectId  //// update user id not object id thats y youse this 
 const fs = require('fs')
 const path = require('path')
-
+const Mail = require('../config/mailVeriFication')
 const login = (req,res) => {
     console.log("admin log");
     res.render('admin/login')
@@ -38,7 +38,8 @@ const adminHome =async (req,res)=>{
         
      let admin = await Model.findOne({_id:req.session.admin}); 
      
-     const users = await Model.find({is_admin:false}); 
+     const users = await Model.find(); 
+
     res.render('admin/admindashbord',{admin,users})
 }catch(error){
    res.redirect('/')  
@@ -51,9 +52,12 @@ const adminHome =async (req,res)=>{
 const editUser =async (req,res)=>{
     try{
         console.log(req.params.userID);
-        
-      const user = await Model.findOne({_id:req.params.userID})
-      res.render('admin/edit',{user})
+        let error = req.session.error 
+        req.session.error = null
+        let _id = new ObjectId(req.params.userID)
+      const user = await Model.findOne({_id})
+         
+      res.render('admin/edit',{user,error})
     }catch(error){  
         console.log(error);
     }
@@ -63,11 +67,26 @@ const editUser =async (req,res)=>{
 const updateProfile =async (req,res)=>{
 
     try{
-    const {userID, name ,email,password} = req.body;
+    let {userID, name ,email,password} = req.body;
+    const updateData = {name};
     const _id =new ObjectId(userID);
     const  user =await Model.findOne({_id});
     
-  
+    if(email === user.email){
+          updateData.email = email
+        }else{
+            const userExist = await Model.find({email})
+            console.log(userExist);
+            
+            if(userExist.length == 0){
+                updateData.email = email;
+            }else{
+               
+                req.session.error = 'User already exist with the same email'
+                
+                return  res.redirect(`/admin/edituser/${_id}`)
+            }
+        }
     let image;
     if(req.file){
         image = req.file.filename;
@@ -88,7 +107,7 @@ const updateProfile =async (req,res)=>{
             
         }
     } 
-    const updateData = {name,email};
+ 
     if(password){
         password = await bcrypt.hash(password,10);
         updateData.password = password;
@@ -114,13 +133,95 @@ const logout = (req,res)=>{
     res.redirect('/login')
 }
 
+ const deleteUser =async (req,res)=>{
+    try{
+        const _id = req.params.userID
+        const user = await Model.findOne({_id});
+        if(user){
+            const delete1 = await Model.deleteOne({_id:user._id})  
+            res.redirect('/admin/')
+        }
+    }catch(error){
+        console.log(error);
+        
+    }
+ }
 
 
-module.exports = {
+  const addNewLoad = (req,res)=>{
+      res.render('admin/addNewUser')
+  }
+
+  const addNewUser =async (req,res)=>{
+
+    try{
+    let  {name,email,password,is_admin} = req.body
+    console.log(req.body);
+      
+    is_admin = is_admin == 'true'? true:false
+    
+    let image = req.file.filename
+    const userExist = await Model.findOne({email});
+    if(!userExist){
+        
+        password = await  bcrypt.hash(password,10)
+        const newUser = new Model({
+            name,
+            email,
+            image,
+            password,
+            is_admin
+        })
+        let added = await newUser.save()
+        
+        Mail.sendVeriFyMail(added.name, added.email, added._id)
+          let msg = is_admin == true ? 'New Admin create Completed':'New User Create Completed'
+       return res.status(200).json({status:200,msg:msg})
+    }else{
+         return   res.status(409).json({status:409,msg:"User Already is Exist With Same Email"})
+    }
+}catch(error){
+    console.error(error);
+    res.json({status:500,error:'Server Side Error'}).status(500)
+}
+  }
+
+
+  // sort data
+
+  const sortData =async (req,res)=>{
+    try{
+
+        const data = req.body.value
+        
+          if(data === "All"){
+              
+         const alldata = await Model.find();
+         
+         res.json({status:true,msg: alldata})
+         
+        }
+        else{
+            console.log(data)
+            let usertype =  data==="admin" ? true : false
+            console.log(usertype)
+            const result = await Model.find({is_admin: usertype})
+            res.json({status: true, msg:result})
+        }
+    }catch(error){
+        res.json({status:false,msg:error.message})
+    }
+  }
+  
+ module.exports = {
     login,
     adminHome,
     adminValidation,
     logout,
     editUser,
-    updateProfile
+    updateProfile,
+    deleteUser,
+    addNewLoad,
+    addNewUser,
+    sortData
 }

@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer')
 const dotenv =  require('dotenv')
 dotenv.config()
-const sendVeriFyMail =async (name,mail,id,image)=>{
+const sendVeriFyMail =async (name,mail,id)=>{
     try{
      const transporter = nodemailer.createTransport({
         host:'smtp.gmail.com',

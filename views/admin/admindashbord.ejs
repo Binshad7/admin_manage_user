@@ -203,10 +203,14 @@
     <div class="content-wrapper">
         <div class="table-wrapper">
             <h2>User Management</h2>
-            <button class="btn add-user-btn">Add New User</button>
+            <button onclick="location.href='/admin/AddNewUSer' " class="btn add-user-btn">Add New User</button>
             <div class="search-bar">
                 <input type="text" class="form-control" placeholder="Search users by name or email">
-                <button class="btn btn-search">Search</button>
+                <select name="option" id="options" >
+                    <option value="All">All</option>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
             </div>
             <table class="table table-striped">
                 <thead>
@@ -215,11 +219,12 @@
                         <th>Profile</th>
                         <th>Username</th>
                         <th>Email</th>
+                        <th>Role</th>
                         <th>Actions</th>
                         
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tbody">
 					
                     <% users.forEach((user,i) => { %>
 						<tr>
@@ -227,9 +232,11 @@
 							<td><img src="/userImages/<%= user.image %>" class="img-fluid rounded-circle" alt="User Profile"></td>
 							<td><%= user.name %></td>
 							<td><%= user.email %></td>
+							<td><%= user.is_admin ? "Admin" : "User" %></td>
+
 							<td>
 								<a class="btn btn-success" href="/admin/edituser/<%= user._id %>">Edit</a>
-								<a class="btn btn-danger"  onclick="" >Delete</a>
+								<a class="btn btn-danger"  onclick="deleteUser('<%= user._id %>')" >Delete</a>
 							</td>
 						</tr>
 					<% }); %>
@@ -241,5 +248,86 @@
 
     <!-- Bootstrap core JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+      <script>
+        let tbody = document.getElementById("tbody")
+        document.querySelector('#options').addEventListener('change',(e)=>{
+           let value = e.target.value
+           console.log(value);
+           try{
+
+           
+           fetch('/admin/sortData',{
+            method:'post',
+            headers:{
+                "Content-Type": "application/json"
+            },
+            body:JSON.stringify({value:value})
+           }).
+           then((response)=>response.json()).
+           then((data)=>{
+            
+             if(data.status){
+                console.log(data)
+                tbody.innerHTML = "";
+                data.msg.map((user,i)=>{
+
+                    let element = `
+                    <tr>
+                            <td>${i+1}</td>
+							<td><img src="/userImages/${user.image}" class="img-fluid rounded-circle" alt="User Profile"></td>
+							<td>${user.name}</td>
+							<td>${user.name}</td>
+							<td>${user.is_admin ? "Admin" : "User"}</td>
+
+							<td>
+								<a class="btn btn-success" href="/admin/edituser/${user._id}">Edit</a>
+								<a class="btn btn-danger"  onclick="deleteUser('${user._id}')" >Delete</a>
+							</td>
+					</tr>`
+                    tbody.innerHTML += element
+                })
+
+             }
+             else console.log(data.msg)
+             
+
+           }).catch((err)=>{
+            console.log('error i catch',err);
+            
+           })
+
+        }catch(error){
+            console.log("fetch error"); 
+        }
+           
+        })
+      </script>
+    <script>
+      function deleteUser(userID){
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true, 
+            confirmButtonText: 'Yes, delete it!',
+            confirmButtonColor: 'red',
+            cancelButtonColor: 'green'
+        }).then((result) => {
+            console.log("Response from SweetAlert received");
+            if (result.isConfirmed) {
+                console.log('Confirmed deletion');
+                // Redirect to the delete URL
+                window.location.href =`/admin/delete/${userID}`; // Use user_id directly
+            } else {
+                console.log('Deletion canceled');
+            }
+        }).catch((error) => {
+            console.error("Error occurred in SweetAlert: ", error);
+        });
+      }
+    </script>
 </body>
 </html>

@@ -36,4 +36,16 @@ admin_router.post('/loginValid',admin_controller.adminValidation);
 // user update
 admin_router.post('/editUserProfile',uploaded.single('image'),admin_controller.updateProfile);
 
+// delete user profile 
+admin_router.get('/delete/:userID',admin_controller.deleteUser)
+
+// add new user 
+admin_router.get('/AddNewUSer',admin_controller.addNewLoad)
+// new user 
+admin_router.post('/AddNewUSer',uploaded.single('image'),admin_controller.addNewUser)
+
+// sort data
+
+admin_router.post('/sortData',admin_controller.sortData);
+
 module.exports = admin_router;

@@ -53,7 +53,7 @@ const newUserRegister = async (req, res) => {
             let result = await user.save()
             req.session.userID = result._id;
 
-            Mail.sendVeriFyMail(result.name, result.email, result._id, result.image)
+            Mail.sendVeriFyMail(result.name, result.email, result._id)
             return res.status(200).json({
 
                 status: 200,
