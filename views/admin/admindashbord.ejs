@@ -205,13 +205,13 @@
             <h2>User Management</h2>
             <button onclick="location.href='/admin/AddNewUSer' " class="btn add-user-btn">Add New User</button>
             <div class="search-bar">
-                <input type="text" class="form-control" placeholder="Search users by name or email">
-                <select name="option" id="options" >
-                    <option value="All">All</option>
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                </select>
+                <input type="text" name="search" class="form-control" id="search" placeholder="Search users by name or email">
             </div>
+            <select name="option" id="options" >
+                <option value="All">All</option>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -250,7 +250,64 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- search handling -->
+  <script>
+    document.querySelector('#search').addEventListener('input',(e)=>{
+        console.log(e.target.value);
+        let tbody = document.getElementById("tbody")
+        let data = e.target.value
+       try{
+        fetch('/admin/searchData',{
+            method:'post',
+            headers:{
+             'Content-Type':'application/json',
+             'accept':'application/json'
+            },
+            body:JSON.stringify({data})
+        }).
+        then((response)=>response.json()).
+        then((data)=>{
+          if(data.status){
+            tbody.innerHTML = ''
+            
+                console.log(data.msg, ' length',data.msg.length);
+                
+               data.msg.map((users,i)=>{
+                    
+                let element = 
+                `  <tr>
+                            <td>${i+1}</td>
+							<td><img src="/userImages/${users.image}" class="img-fluid rounded-circle" alt="User Profile"></td>
+							<td>${users.name}</td>
+							<td>${users.name}</td>
+							<td>${users.is_admin ? "Admin" : "User"}</td>
 
+							<td>
+								<a class="btn btn-success" href="/admin/edituser/${users._id}">Edit</a>
+								<a class="btn btn-danger"  onclick="deleteUser('${users._id}')" >Delete</a>
+							</td>
+					</tr>`
+                    tbody.innerHTML += element
+               })
+             
+              
+            
+          }else{
+            console.log(data.msg, ' length',data.msg.length);
+                let element =
+                 `
+                 <div>  <h1> Users are Not found </h1>  </div>
+                `
+                tbody.innerHTML +=element; 
+          }
+        })
+       
+    }catch(err){
+        console.log(err);
+    }
+    })
+  </script>
+   <!-- sort handling  -->
       <script>
         let tbody = document.getElementById("tbody")
         document.querySelector('#options').addEventListener('change',(e)=>{

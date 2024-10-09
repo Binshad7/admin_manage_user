@@ -48,4 +48,7 @@ admin_router.post('/AddNewUSer',uploaded.single('image'),admin_controller.addNew
 
 admin_router.post('/sortData',admin_controller.sortData);
 
+// search data 
+
+admin_router.post('/searchData',admin_controller.searchData);
 module.exports = admin_router;

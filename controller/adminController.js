@@ -5,6 +5,7 @@ const ObjectId = require('mongoose').Types.ObjectId  //// update user id not obj
 const fs = require('fs')
 const path = require('path')
 const Mail = require('../config/mailVeriFication')
+const { use } = require('bcrypt/promises')
 const login = (req,res) => {
     console.log("admin log");
     res.render('admin/login')
@@ -191,27 +192,45 @@ const logout = (req,res)=>{
 
   const sortData =async (req,res)=>{
     try{
-
         const data = req.body.value
         
           if(data === "All"){
               
-         const alldata = await Model.find();
+         const allData = await Model.find();
          
-         res.json({status:true,msg: alldata})
+         res.json({status:true,msg: allData})
          
         }
         else{
-            console.log(data)
-            let usertype =  data==="admin" ? true : false
-            console.log(usertype)
-            const result = await Model.find({is_admin: usertype})
+            let userType =  data==="admin" ? true : false
+            const result = await Model.find({is_admin: userType})
             res.json({status: true, msg:result})
         }
     }catch(error){
         res.json({status:false,msg:error.message})
     }
   }
+
+  const searchData =async (req,res)=>{
+    try{
+        const search = req.body.data || '';
+        console.log(search);
+  
+      const users = await Model.find({name:new RegExp('^'+ search ,'i')})
+    
+      if(users.length > 0){
+        res.status(200).json({status:true,msg:users})
+      }else{
+        res.status(404).json({status:false,msg:'Not found the users from they DB'})
+      }
+
+    }catch(error){
+        console.log(error);
+       res.status(500).json({status:500,msg:error})
+    }
+
+  }
+
   
  module.exports = {
     login,
@@ -223,5 +242,6 @@ const logout = (req,res)=>{
     deleteUser,
     addNewLoad,
     addNewUser,
-    sortData
+    sortData,
+    searchData
 }
