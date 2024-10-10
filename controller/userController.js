@@ -55,6 +55,8 @@ const newUserRegister = async (req, res) => {
                 is_admin: false
             })
             let result = await user.save()
+            
+            req.session.user = true;
             req.session.userID = result._id;
 
             Mail.sendVeriFyMail(result.name, result.email, result._id)
@@ -99,6 +101,7 @@ const userValid = async (req, res) => {
             if (valid) {
 
                 req.session.userID = user._id;
+                req.session.user = true;
                 return res.redirect('/')
 
             } else {
@@ -117,7 +120,7 @@ const userValid = async (req, res) => {
 
 
 const logout = (req, res) => {
-    req.session.destroy()
+    req.session.destroy();
     res.redirect('/login')
 }
 
