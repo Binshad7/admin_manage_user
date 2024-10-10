@@ -14,7 +14,7 @@ const sendVeriFyMail =async (name,mail,id)=>{
         }
      })
      const mailOptions = {
-        from:'binshadmuhammed282@gmail.com',
+        from:process.env.MY_EMAIL,
         to:mail,
         subject:'For Verification mail',
         html:`
