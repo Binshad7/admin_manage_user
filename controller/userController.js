@@ -1,16 +1,20 @@
 const userModel = require('../models/userModel')
 const bcrypt = require('bcrypt');
-
+const ObjectID = require('mongoose').Types.ObjectId
 const Mail = require('../config/mailVeriFication')
+
+
 const home = async (req, res) => {
-    let _id = req.session.userID
+
+    let _id = new ObjectID(req.session.userID)
+
     const user = await userModel.findOne({
         _id: _id
     })
-    const {
-        name,
-        image
-    } = user
+    console.log(user);
+    
+   const {name,image} = user;
+
     res.render('users/home', {
         name,
         image,

@@ -1,11 +1,18 @@
+const ObjectID = require('mongoose').Types.ObjectId
+
 const is_login = (req,res,next)=>{
-    
-    if(req.session.userID){
+    const user = new ObjectID(req.session.userID)
+    if(user){
+        console.log('user is login');
+        console.log(user);
+        
        next()
     }else{
+        console.log('user is not login now ');
+        
       res.redirect('/login')
     }
-}
+} 
 
 const is_logout = (req,res,next)=>{
     if(req.session.userID){

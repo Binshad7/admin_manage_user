@@ -6,11 +6,13 @@ const fs = require('fs')
 const path = require('path')
 const Mail = require('../config/mailVeriFication')
 const { use } = require('bcrypt/promises')
+
+// login page render
 const login = (req,res) => {
     console.log("admin log");
     res.render('admin/login')
 }
-
+ // admin validation
 const adminValidation = async (req,res)=>{
     const {email, password} = req.body
     try{
@@ -33,7 +35,7 @@ const adminValidation = async (req,res)=>{
         res.status(500).json({status:400,error:'Some thing happen the server try after'})
     }
 }
-          
+   // render admin home       
 const adminHome =async (req,res)=>{
     try{
         
@@ -49,7 +51,7 @@ const adminHome =async (req,res)=>{
 
 
 // edit user 
- 
+
 const editUser =async (req,res)=>{
     try{
         console.log(req.params.userID);
@@ -68,55 +70,58 @@ const editUser =async (req,res)=>{
 const updateProfile =async (req,res)=>{
 
     try{
-    let {userID, name ,email,password} = req.body;
+    let {userID, name ,email,password,is_admin} = req.body;
     const updateData = {name};
     const _id =new ObjectId(userID);
     const  user =await Model.findOne({_id});
     
     if(email === user.email){
-          updateData.email = email
+        updateData.email = email
+    }else{
+        const userExist = await Model.find({email})
+        console.log(userExist);
+        
+        if(userExist.length == 0){
+            updateData.email = email;
         }else{
-            const userExist = await Model.find({email})
-            console.log(userExist);
             
-            if(userExist.length == 0){
-                updateData.email = email;
-            }else{
-               
-                req.session.error = 'User already exist with the same email'
-                
-                return  res.redirect(`/admin/edituser/${_id}`)
-            }
+            req.session.error = 'User already exist with the same email'
+            
+            return  res.redirect(`/admin/edituser/${_id}`)
         }
+    }
     let image;
     if(req.file){
         image = req.file.filename;
-
+        
         // if file available then delete old image form tha folder
         const oldImage = path.join(__dirname,`../public/userImages/${user.image}`)
         if(fs.existsSync(oldImage)){
-              fs.unlink(oldImage,(error)=>{
+            fs.unlink(oldImage,(error)=>{
                 
                 if(error){
                     console.log("Some went wrong ",error);
                 }else{
                     console.log('deleted');
                 }
-              })
+            })
         }else{
             console.log('file not found');
             
         }
     } 
- 
+    
     if(password){
         password = await bcrypt.hash(password,10);
         updateData.password = password;
     }
-
+    
+    
     if(image){
         updateData.image = image
     }
+    is_admin = is_admin =='admin'?true:false
+    updateData.is_admin = is_admin
     let updated = await Model.updateOne({_id:_id},{$set:updateData})
     console.log(updated);
     
@@ -125,7 +130,7 @@ const updateProfile =async (req,res)=>{
        console.log(error);
     }
 }
-
+  // logout for admin
 const logout = (req,res)=>{
     console.log("logout ");
     
@@ -133,7 +138,7 @@ const logout = (req,res)=>{
     req.session.destroy()
     res.redirect('/login')
 }
-
+  // delete every one
  const deleteUser =async (req,res)=>{
     try{
         const _id = req.params.userID
@@ -148,11 +153,11 @@ const logout = (req,res)=>{
     }
  }
 
-
+  // load that new  user page
   const addNewLoad = (req,res)=>{
       res.render('admin/addNewUser')
   }
-
+ // add new user and admin also 
   const addNewUser =async (req,res)=>{
 
     try{
