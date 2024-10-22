@@ -57,6 +57,18 @@ app.all('*',(req,res)=>{
     res.send('404')
 })
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);  // Keep this for server-side logging
+  
+  if (process.env.NODE_ENV === 'development') {
+    // In development, send the stack trace for debugging
+    res.status(500).send(err.stack);  
+  } else {
+    // In production, send a generic message
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 // listen this port 
 app.listen(PORT,()=>{
     console.log(`PORT Running on ${PORT}`);

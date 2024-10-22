@@ -6,6 +6,7 @@ const fs = require('fs')
 const path = require('path')
 const Mail = require('../config/mailVeriFication')
 const { use } = require('bcrypt/promises')
+const { log } = require('console')
 
 // login page render
 const login = (req,res) => {
@@ -74,22 +75,22 @@ const updateProfile =async (req,res)=>{
     const updateData = {name};
     const _id =new ObjectId(userID);
     const  user =await Model.findOne({_id});
-    
-    if(email === user.email){
-        updateData.email = email
-    }else{
-        const userExist = await Model.find({email})
-        console.log(userExist);
+    // email update option its not good practice 
+    // if(email === user.email){
+    //     updateData.email = email
+    // }else{
+    //     const userExist = await Model.find({email})
+    //     console.log(userExist);
         
-        if(userExist.length == 0){
-            updateData.email = email;
-        }else{
+    //     if(userExist.length == 0){
+    //         updateData.email = email;
+    //     }else{
             
-            req.session.error = 'User already exist with the same email'
+    //         req.session.error = 'User already exist with the same email'
             
-            return  res.redirect(`/admin/edituser/${_id}`)
-        }
-    }
+    //         return  res.redirect(`/admin/edituser/${_id}`)
+    //     }
+    // }
     let image;
     if(req.file){
         image = req.file.filename;
@@ -120,7 +121,11 @@ const updateProfile =async (req,res)=>{
     if(image){
         updateData.image = image
     }
-    is_admin = is_admin =='admin'?true:false
+    console.log(is_admin,'admin');
+    
+    is_admin = is_admin ==='admin' ? true :false;
+    console.log(is_admin);
+    
     updateData.is_admin = is_admin
     let updated = await Model.updateOne({_id:_id},{$set:updateData})
     console.log(updated);

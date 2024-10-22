@@ -18,7 +18,7 @@
              <input type="text" value="<%= user._id %>" name="userID" id="userId" hidden>
         <input class="text" type="text" name="name" id="name" value="<%= user.name %>" placeholder="Username" required="" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ced4da; border-radius: 4px;">
 
-        <input class="text email" type="email" name="email" id="email" value="<%= user.email %>" placeholder="Email" required="" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ced4da; border-radius: 4px;">
+        <input class="text email" type="email" name="email" id="email" value="<%= user.email %>" placeholder="Email" required="" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ced4da; border-radius: 4px;" hidden>
 
         <input class="text" type="password" name="password" id="password" placeholder="New Password (Optional)" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ced4da; border-radius: 4px;">
 
@@ -26,8 +26,8 @@
      
           <!-- Dropdown for is_admin option -->
           <select name="is_admin" id="is_admin" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ced4da; border-radius: 4px;">
-            <option value="false">User</option>
-            <option value="true">Admin </option>
+            <option value="user">User</option>
+            <option value="admin">Admin </option>
         </select>
         <input type="submit" value="Update Profile" style="background-color: #343a40; color: #ffffff; padding: 10px 20px; border: none; border-radius: 4px; width: 100%; cursor: pointer;">
     </form>
@@ -71,16 +71,17 @@ ddocument.querySelector('#editProfileForm').addEventListener('submit', (e) => {
         return;
     }
 
-    if (!email.match(/^([a-zA-Z0-9_]+)@([a-zA-Z0-9]+)\.([a-zA-Z]+)(.[a-zA-Z]+)?$/)) {
-        result.innerHTML = "Email should be correctly entered";
-        return;
-    }
+    // if (!email.match(/^([a-zA-Z0-9_]+)@([a-zA-Z0-9]+)\.([a-zA-Z]+)(.[a-zA-Z]+)?$/)) {
+    //     result.innerHTML = "Email should be correctly entered";
+    //     return;
+    // }
 
     if (password && password !== confirmPassword) {
         result.innerHTML = 'Confirm Password does not match.';
         return;
     }
-
+ console.log(formData);
+ 
     try {
         fetch('/admin/editUserProfile', {
             method: 'POST',
