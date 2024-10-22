@@ -5,12 +5,11 @@ const ObjectId = require('mongoose').Types.ObjectId  //// update user id not obj
 const fs = require('fs')
 const path = require('path')
 const Mail = require('../config/mailVeriFication')
-const { use } = require('bcrypt/promises')
-const { log } = require('console')
+
 
 // login page render
 const login = (req,res) => {
-    console.log("admin log");
+    console.log(  req.session.valid);
     res.render('admin/login')
 }
  // admin validation
@@ -137,11 +136,21 @@ const updateProfile =async (req,res)=>{
 }
   // logout for admin
 const logout = (req,res)=>{
-    console.log("logout ");
     
-    req.session.valid = false
-    req.session.destroy()
-    res.redirect('/login')
+        console.log("Logging out...");
+    
+        // Destroy the session
+        req.session.destroy((err) => {
+            if (err) {
+                console.error("Error while logging out:", err);
+                return res.status(500).json({ status: 500, msg: "Logout failed. Please try again." });
+            }
+    
+            console.log("Session destroyed successfully.");
+            res.redirect('/login'); // Redirect to login after successful logout
+        });
+
+    
 }
   // delete every one
  const deleteUser =async (req,res)=>{
@@ -160,6 +169,7 @@ const logout = (req,res)=>{
 
   // load that new  user page
   const addNewLoad = (req,res)=>{
+    console.log(  req.session.valid,req.session);
       res.render('admin/addNewUser')
   }
  // add new user and admin also 
@@ -183,6 +193,7 @@ const logout = (req,res)=>{
             password,
             is_admin
         })
+        
         let added = await newUser.save()
         
         Mail.sendVeriFyMail(added.name, added.email, added._id)

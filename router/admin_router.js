@@ -2,6 +2,9 @@ const express = require('express');
 const admin_router = express();
 const multer = require('multer')
 const path = require('path')
+const nocache = require('nocache');  // Add nocache to prevent caching
+
+admin_router.use(nocache()); 
   // Set up storage for uploaded files
   // suggest this we can do this in module
 const storage = multer.diskStorage({
@@ -24,9 +27,9 @@ const admin_controller = require('../controller/adminController')
 // home page render 
 admin_router.get('/',auth.is_login,admin_controller.adminHome);
 // login page render
-admin_router.get('/login',admin_controller.login);
+admin_router.get('/login',auth.is_true,admin_controller.login);
 //logout page render
-admin_router.get('/logout',auth.is_logout,admin_controller.logout)
+admin_router.get('/logout',admin_controller.logout)
 // edit user page rendering
 admin_router.get('/edituser/:userID',auth.is_login,admin_controller.editUser)
 
